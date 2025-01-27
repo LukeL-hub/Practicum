@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PersonReader {
@@ -20,7 +21,7 @@ public class PersonReader {
             return;
         }
 
-
+        ArrayList<Person> personList = new ArrayList<>(); // Store Person objects
         System.out.printf("%-10s %-15s %-15s %-10s %-6s\n", "ID", "First Name", "Last Name", "Title", "YOB");
         System.out.println("------------------------------------------------------------");
 
@@ -29,10 +30,23 @@ public class PersonReader {
                 String line = scanner.nextLine();
                 String[] data = line.split(",");
 
-
                 if (data.length == 5) {
-                    System.out.printf("%-10s %-15s %-15s %-10s %-6s\n",
-                            data[0].trim(), data[1].trim(), data[2].trim(), data[3].trim(), data[4].trim());
+                    try {
+                        String id = data[0].trim();
+                        String firstName = data[1].trim();
+                        String lastName = data[2].trim();
+                        String title = data[3].trim();
+                        int yob = Integer.parseInt(data[4].trim());
+
+                        Person person = new Person(id, firstName, lastName, title, yob);
+                        personList.add(person);
+
+
+                        System.out.println(person.toString());
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid YOB format for record: " + line);
+                    }
                 } else {
                     System.out.println("Invalid record format: " + line);
                 }
@@ -41,9 +55,11 @@ public class PersonReader {
             System.out.println("Error reading the file: " + e.getMessage());
         }
 
-
-        if (!SafeInput.getYNConfirm(new Scanner(System.in), "Would you like to process another file?")) {
+        if (SafeInput.getYNConfirm(new Scanner(System.in), "Would you like to process another file?")) {
+            main(args);
+        } else {
             System.out.println("Exiting program.");
         }
     }
 }
+
